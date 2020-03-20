@@ -11,7 +11,7 @@ import java.security.PrivateKey;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.Date;
 
-public class GithubChecks {
+public class JwtHelper {
 
 
     static PrivateKey get(String filename) throws Exception {

@@ -1,12 +1,7 @@
 package com.example.ChecksPlugin;
 
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.util.List;
-import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
@@ -26,24 +21,35 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import static com.example.ChecksPlugin.GithubChecks.createJWT;
+import static com.example.ChecksPlugin.JwtHelper.createJWT;
 
 @RestController
 @SpringBootApplication
 public class ChecksPluginApplication {
 
-	private static String APP_IDENTIFIER="";
+	private static String APP_IDENTIFIER="53528";
 
 	@RequestMapping(value = "/event_handler", method = RequestMethod.POST)
 	public void handleEvent(@RequestBody String requestBodyString) throws Exception {
 		System.out.println("Received event handler event");
 		String token = authenticateApplication();
-		JSONObject requestJSON = convertPayloadToJSON(requestBodyString);
+		JSONObject requestJSON = Utils.convertPayloadToJSON(requestBodyString);
 		System.out.println(requestBodyString);
 
-		if(requestJSON.getString("action").equals("requested") || requestJSON.getString("action").equals("rerequested")){
-			createCheckRun(requestJSON, token);
-		}
+		if (requestJSON.has("check_suite")) {
+            if (requestJSON.getString("action").equals("requested") || requestJSON
+                .getString("action").equals("rerequested")) {
+                createCheckRun(requestJSON, token);
+            }
+
+            if (requestJSON.getString("action").equals("created")) {
+                System.out.println("Initiating check run because we have received check run event");
+            }
+        }
+
+		else {
+            System.out.println("The GithubChecks Application has been successfully installed");
+        }
 	}
 
 	private void createCheckRun(JSONObject requestJSON, String accessToken) throws Exception {
@@ -62,11 +68,9 @@ public class ChecksPluginApplication {
 		jo.put("name", "WarningsPluginCheck");
 		jo.put("head_sha", headSHA);
 
-
-		//Adding headers
 		HttpPost post = new HttpPost(url);
 		post.addHeader( "Accept" , "application/vnd.github.antiope-preview+json");
-		String token = "token " + accessToken;
+        String token = "token " + accessToken;
 		post.addHeader("Authorization", token);
 
 		StringEntity input = new StringEntity(jo.toString());
@@ -75,7 +79,13 @@ public class ChecksPluginApplication {
 
 		try (CloseableHttpClient httpClient = HttpClients.createDefault();
 			CloseableHttpResponse response = httpClient.execute(post)) {
-			System.out.println(EntityUtils.toString(response.getEntity()));
+			String responseString = EntityUtils.toString(response.getEntity());
+			System.out.println(responseString);
+			JSONObject responseEntity = Utils.convertPayloadToJSON(responseString);
+			String checkRunID = responseEntity.getString("id");
+			if(response.getStatusLine().getStatusCode()==201) {
+				CheckRuns.initiateCheckRun(requestJSON, checkRunID, token);
+			}
 		}
 	}
 
@@ -104,10 +114,6 @@ public class ChecksPluginApplication {
 			e.printStackTrace();
 		}
 		return null;
-	}
-	
-	private JSONObject convertPayloadToJSON(String payload) throws Exception{
-		return new JSONObject(payload);
 	}
 
 }

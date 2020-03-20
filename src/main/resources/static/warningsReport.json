@@ -1,0 +1,60 @@
+{
+  "_class":"io.jenkins.plugins.analysis.core.restapi.ReportApi",
+  "issues":[
+    {
+      "baseName":"AbstractParser.java",
+      "category":"EXPERIMENTAL",
+      "columnEnd":0,
+      "columnStart":0,
+      "description":"",
+      "fileName":"testFile.java",
+      "fingerprint":"be18f803030f2af690fbeef09eafa5c9",
+      "lineEnd":10,
+      "lineStart":10,
+      "message":"edu.hm.hafner.analysis.AbstractParser.parse(File, Charset, Function) may fail to clean up java.io.InputStream",
+      "moduleName":"Static Analysis Model and Parsers",
+      "origin":"spotbugs",
+      "packageName":"edu.hm.hafner.analysis",
+      "reference":"46",
+      "severity":"LOW",
+      "type":"OBL_UNSATISFIED_OBLIGATION"
+    },
+    {
+      "baseName":"ReportTest.java",
+      "category":"STYLE",
+      "columnEnd":0,
+      "columnStart":0,
+      "description":"",
+      "fileName":"testFile.java",
+      "fingerprint":"331d509297fad027813365ad0fb37e69",
+      "lineEnd":23,
+      "lineStart":23,
+      "message":"Return value of Report.get(int) ignored, but method has no side effect",
+      "moduleName":"Static Analysis Model and Parsers",
+      "origin":"spotbugs",
+      "packageName":"edu.hm.hafner.analysis",
+      "reference":"46",
+      "severity":"LOW",
+      "type":"RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT"
+    },
+    {
+      "baseName":"ReportTest.java",
+      "category":"STYLE",
+      "columnEnd":0,
+      "columnStart":0,
+      "description":"",
+      "fileName":"testFile.java",
+      "fingerprint":"1e641f9c0b35ed97140d639695e8ce18",
+      "lineEnd":28,
+      "lineStart":28,
+      "message":"Return value of Report.get(int) ignored, but method has no side effect",
+      "moduleName":"Static Analysis Model and Parsers",
+      "origin":"spotbugs",
+      "packageName":"edu.hm.hafner.analysis",
+      "reference":"46",
+      "severity":"LOW",
+      "type":"RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT"
+    }
+  ],
+  "threshold":3
+}
